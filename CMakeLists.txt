@@ -8,7 +8,7 @@ PROJECT(${PROJECTNAME})
 
 set(LIBRARY_NAME codycocommons)
 set(VARS_PREFIX ${PROJECT_NAME})
-set(INCLUDE_DIRS include/modHelp)
+set(INCLUDE_DIRS include/codyco-commons)
 
 set(${VARS_PREFIX}_MAJOR_VERSION 0)
 set(${VARS_PREFIX}_MINOR_VERSION 0)
