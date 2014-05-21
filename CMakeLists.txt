@@ -1,50 +1,89 @@
-# Copyright: (C) 2013 RobotCub Consortium
-# Authors: Silvio Traversaro
+# Copyright: (C) 2013 CoDyCo Consortium
+# Authors: Francesco Romano, Silvio Traversaro
 # CopyPolicy: Released under the terms of the GNU GPL v2.0 (or any later version).
 
-cmake_minimum_required( VERSION 2.8 FATAL_ERROR)
+SET(PROJECTNAME codyco-commons)
 
-project(codyco_commons)
+PROJECT(${PROJECTNAME})
 
-find_package(YARP)
+set(LIBRARY_NAME codycocommons)
+set(VARS_PREFIX ${PROJECT_NAME})
+set(INCLUDE_DIRS include/modHelp)
 
-# set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(${VARS_PREFIX}_MAJOR_VERSION 0)
+set(${VARS_PREFIX}_MINOR_VERSION 0)
+set(${VARS_PREFIX}_PATCH_VERSION 1)
+set(${VARS_PREFIX}_VERSION ${${VARS_PREFIX}_MAJOR_VERSION}.${${VARS_PREFIX}_MINOR_VERSION}.${${VARS_PREFIX}_PATCH_VERSION})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${YARP_MODULE_PATH})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ICUB_MODULE_PATH})
+find_package(YCM REQUIRED)
+include(YCMDefaultDirs)
+ycm_default_dirs(${VARS_PREFIX})
 
+find_package(YARP REQUIRED)
+find_package(ICUB REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(iDynTree REQUIRED)
 
-set(SRCS    src/MathUtils.cpp
-            src/LockGuard.cpp
-            src/ControllerThread.cpp
-            src/ModelParsing.cpp)
+set(${folder_source} src/MathUtils.cpp
+                     src/LockGuard.cpp
+                     src/ControllerThread.cpp
+                     src/ModelParsing.cpp)
 
-set(HEADERS  include/codyco/Commons.h
+set(${folder_header} include/codyco/Commons.h
              include/codyco/Utils.h
              include/codyco/LockGuard.h
              include/codyco/MathUtils.h
              include/codyco/ControllerThread.h
              include/codyco/ModelParsing.h)
 
-source_group("Source Files" FILES ${SRCS})
-source_group("Header Files" FILES ${HEADERS})
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
 
-include_directories(include/codyco
-                    ${EIGEN3_INCLUDE_DIR}
-                    ${iDynTree_INCLUDE_DIRS}
-                    ${kdl_codyco_INCLUDE_DIRS}
-                    ${orocos_kdl_INCLUDE_DIRS}
-                    ${skinDynLib_INCLUDE_DIRS}
-                    ${ctrlLib_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+if(MSVC)
+    message(STATUS "Building ${PROJECT_NAME} as a shared library is not currently supported on Windows")
+    set(COMPILE_AS_SHARED_LIBRARY FALSE)
+endif()
 
-add_library(${PROJECT_NAME} ${SRCS} ${HEADERS})
+if(COMPILE_AS_SHARED_LIBRARY)
+    set(LIB_TYPE SHARED)
+else()
+    set(LIB_TYPE STATIC)
+endif()
 
-target_link_libraries(${PROJECT_NAME} ${YARP_LIBRARIES})
+add_library(${LIBRARY_NAME} ${LIB_TYPE} ${folder_source} ${folder_header})
 
-icub_export_library(${PROJECT_NAME} INTERNAL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
-                                    DESTINATION include/codyco
-                                    FILES ${HEADERS})
+set_target_properties(${LIBRARY_NAME}  PROPERTIES VERSION ${${VARS_PREFIX}_VERSION}
+                                       SOVERSION ${${VARS_PREFIX}_VERSION}
+                                       PUBLIC_HEADER "${folder_header}")
+
+target_include_directories(${LIBRARY_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>"
+                                           "$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${${VARS_PREFIX}_INSTALL_INCLUDEDIR}>"
+                                           ${YARP_INCLUDE_DIRS}
+                                           ${iDynTree_INCLUDE_DIRS}
+                                           ${skinDynLib_INCLUDE_DIRS}
+                                           ${ctrlLib_INCLUDE_DIRS}
+                                           ${EIGEN3_INCLUDE_DIRS})
+
+target_link_libraries(${LIBRARY_NAME} ${YARP_LIBRARIES}
+                                      ${iDynTree_LIBRARIES}
+                                      ${ctrlLib_LIBRARIES}
+                                      ${skinDynLib_LIBRARIES})
+
+install(TARGETS ${LIBRARY_NAME}
+        EXPORT  ${PROJECT_NAME}
+        RUNTIME DESTINATION "${${VARS_PREFIX}_INSTALL_BINDIR}" COMPONENT bin
+        LIBRARY DESTINATION "${${VARS_PREFIX}_INSTALL_LIBDIR}" COMPONENT shlib
+        ARCHIVE DESTINATION "${${VARS_PREFIX}_INSTALL_LIBDIR}" COMPONENT lib
+        PUBLIC_HEADER DESTINATION "${${VARS_PREFIX}_INSTALL_INCLUDEDIR}/${INCLUDE_DIRS}" COMPONENT dev)
+
+set_property(GLOBAL APPEND PROPERTY ${VARS_PREFIX}_TARGETS ${LIBRARY_NAME})
+
+include(InstallBasicPackageFiles)
+install_basic_package_files(${PROJECT_NAME} VARS_PREFIX ${VARS_PREFIX}
+                                            VERSION ${${VARS_PREFIX}_VERSION}
+                                            COMPATIBILITY SameMajorVersion
+                                            TARGETS_PROPERTY ${VARS_PREFIX}_TARGETS
+                                            NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+include(AddUninstallTarget)
 
