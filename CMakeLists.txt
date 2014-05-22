@@ -2,12 +2,12 @@
 # Authors: Francesco Romano, Silvio Traversaro
 # CopyPolicy: Released under the terms of the GNU GPL v2.0 (or any later version).
 
-SET(PROJECTNAME codyco-commons)
+SET(PROJECTNAME codycoCommons)
 
 PROJECT(${PROJECTNAME})
 
 set(LIBRARY_NAME codycocommons)
-set(VARS_PREFIX ${PROJECT_NAME})
+set(VARS_PREFIX ${PROJECTNAME})
 set(INCLUDE_DIRS include/codyco-commons)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
