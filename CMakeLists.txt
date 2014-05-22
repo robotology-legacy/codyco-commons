@@ -3,6 +3,7 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0 (or any later version).
 
 cmake_minimum_required(VERSION 2.8.11)
+
 project(codycoCommons CXX)
 
 set(LIBRARY_NAME codycocommons)
@@ -28,17 +29,17 @@ find_package(ICUB REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(iDynTree REQUIRED)
 
-set(${folder_source} src/MathUtils.cpp
+set(folder_source src/MathUtils.cpp
                      src/LockGuard.cpp
                      src/ControllerThread.cpp
                      src/ModelParsing.cpp)
 
-set(${folder_header} include/codyco/Commons.h
-             include/codyco/Utils.h
-             include/codyco/LockGuard.h
-             include/codyco/MathUtils.h
-             include/codyco/ControllerThread.h
-             include/codyco/ModelParsing.h)
+set(folder_header include/codyco/Commons.h
+                  include/codyco/Utils.h
+                  include/codyco/LockGuard.h
+                  include/codyco/MathUtils.h
+                  include/codyco/ControllerThread.h
+                  include/codyco/ModelParsing.h)
 
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
@@ -60,7 +61,7 @@ set_target_properties(${LIBRARY_NAME}  PROPERTIES VERSION ${${VARS_PREFIX}_VERSI
                                        SOVERSION ${${VARS_PREFIX}_VERSION}
                                        PUBLIC_HEADER "${folder_header}")
 
-target_include_directories(${LIBRARY_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>"
+target_include_directories(${LIBRARY_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/codyco>"
                                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${${VARS_PREFIX}_INSTALL_INCLUDEDIR}>"
                                            ${YARP_INCLUDE_DIRS}
                                            ${iDynTree_INCLUDE_DIRS}
