@@ -8,7 +8,7 @@ PROJECT(${PROJECTNAME})
 
 set(LIBRARY_NAME codycocommons)
 set(VARS_PREFIX ${PROJECTNAME})
-set(INCLUDE_DIRS include/codyco-commons)
+set(INCLUDE_DIRS include/codyco)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
