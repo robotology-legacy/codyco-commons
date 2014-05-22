@@ -2,22 +2,22 @@
 # Authors: Francesco Romano, Silvio Traversaro
 # CopyPolicy: Released under the terms of the GNU GPL v2.0 (or any later version).
 
-SET(PROJECTNAME codycoCommons)
-
-PROJECT(${PROJECTNAME})
+cmake_minimum_required(VERSION 2.8.11)
+project(codycoCommons CXX)
 
 set(LIBRARY_NAME codycocommons)
-set(VARS_PREFIX ${PROJECTNAME})
+set(VARS_PREFIX ${PROJECT_NAME})
 set(INCLUDE_DIRS include/codyco)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(COMPILE_AS_SHARED_LIBRARY "Compile ${PROJECT_NAME} as a shared library" TRUE)
 
 set(${VARS_PREFIX}_MAJOR_VERSION 0)
 set(${VARS_PREFIX}_MINOR_VERSION 0)
 set(${VARS_PREFIX}_PATCH_VERSION 1)
 set(${VARS_PREFIX}_VERSION ${${VARS_PREFIX}_MAJOR_VERSION}.${${VARS_PREFIX}_MINOR_VERSION}.${${VARS_PREFIX}_PATCH_VERSION})
+
+option(COMPILE_AS_SHARED_LIBRARY "Compile ${PROJECT_NAME} as a shared library" TRUE)
 
 find_package(YCM REQUIRED)
 include(YCMDefaultDirs)
