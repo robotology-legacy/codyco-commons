@@ -61,6 +61,7 @@ before_script:
   - sudo make install
   - cd ../..
   # Prepare iDynTree build
+  - git clone https://github.com/robotology-playground/iDynTree
   - cd iDynTree
   - mkdir build
   - cd build
