@@ -42,7 +42,7 @@ before_script:
   - cd ../..
   # Build kdl_format_io and install it in a local directory
   - sudo chmod +x ./codyco-commons/.travis/build_urdfdom
-  - ./iDynTree/.travis/build_urdfdom
+  - ./codyco-commons/.travis/build_urdfdom
   - git clone https://github.com/traversaro/kdl_format_io
   - cd kdl_format_io
   - mkdir build
