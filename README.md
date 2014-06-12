@@ -1,5 +1,6 @@
 codyco-commons
 ==============
+[![Build Status](https://travis-ci.org/robotology-playground/codyco-commons.svg?branch=master)](https://travis-ci.org/robotology-playground/codyco-commons)
 
 This library contains useful functions developed in the (former monolithic) CoDyCo project.
 
