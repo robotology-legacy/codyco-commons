@@ -22,8 +22,6 @@
 #include <Eigen/Core>
 
 namespace codyco {
-
-    class ControllerThread;
     
     class ControllerThreadDelegate {
     public:

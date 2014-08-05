@@ -60,6 +60,7 @@ namespace codyco {
             icub_version.urdf_file = rf.find("urdf").asString().c_str();
         }
         #endif
+		return true;
     }
 
     void iCubPartVersionOptionsPrint()

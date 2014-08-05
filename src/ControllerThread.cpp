@@ -27,20 +27,20 @@ namespace codyco {
 
     void ControllerThread::setActiveState(bool isActive) {}
 
-    bool ControllerThread::isActiveState() {}
+    bool ControllerThread::isActiveState() {return false;}
 
     void ControllerThread::setDelegate(ControllerThreadDelegate* delegate) {}
 
-    ControllerThreadDelegate* ControllerThread::delegate() {}
+    ControllerThreadDelegate* ControllerThread::delegate() {return 0;}
 
     void ControllerThread::attachDebugVariable(double *buffer, int size) {}
     void ControllerThread::attachDebugVariable(Eigen::MatrixXd variable, std::string portName) {}
     void ControllerThread::detachDebugVariable() {}
 
 #pragma mark - RateThread methods
-    bool ControllerThread::ControllerThread::threadInit() {}
-    void ControllerThread::ControllerThread::threadRelease() {}
-    void ControllerThread::ControllerThread::run() {}
+    bool ControllerThread::threadInit() {return false;}
+    void ControllerThread::threadRelease() {}
+    void ControllerThread::run() {}
 
     void ControllerThread::controllerWillActivate() {}
     void ControllerThread::controllerWillDeactivate() {}
