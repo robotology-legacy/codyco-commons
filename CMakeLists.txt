@@ -12,13 +12,13 @@ set(INCLUDE_DIRS codyco)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-
 set(${VARS_PREFIX}_MAJOR_VERSION 0)
 set(${VARS_PREFIX}_MINOR_VERSION 0)
 set(${VARS_PREFIX}_PATCH_VERSION 1)
 set(${VARS_PREFIX}_VERSION ${${VARS_PREFIX}_MAJOR_VERSION}.${${VARS_PREFIX}_MINOR_VERSION}.${${VARS_PREFIX}_PATCH_VERSION})
 
 option(COMPILE_AS_SHARED_LIBRARY "Compile ${PROJECT_NAME} as a shared library" TRUE)
+option(CODYCOCOMMONS_DISABLE_RPATH "Disable RPATH for the library" FALSE)
 
 find_package(YCM REQUIRED)
 include(YCMDefaultDirs)
@@ -54,6 +54,31 @@ if(COMPILE_AS_SHARED_LIBRARY)
 else()
     set(LIB_TYPE STATIC)
 endif()
+
+#Configure RPATH
+set(CMAKE_MACOSX_RPATH 1) #enable RPATH on OSX. This also suppress warnings on CMake >= 3.0
+# when building, don't use the install RPATH already
+# (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+# set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#This is relative RPATH for libraries built in the same project
+#I assume that the directory is 
+# - install_dir/something for binaries
+# - install_dir/lib for libraries
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+else(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) #very important!
+
+if(CODYCOCOMMONS_DISABLE_RPATH)
+    set(CMAKE_SKIP_BUILD_RPATH TRUE)
+else(CODYCOCOMMONS_DISABLE_RPATH)
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+endif(CODYCOCOMMONS_DISABLE_RPATH)
 
 add_library(${LIBRARY_NAME} ${LIB_TYPE} ${folder_source} ${folder_header})
 
