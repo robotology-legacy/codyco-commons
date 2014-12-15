@@ -18,7 +18,7 @@
 #include "ModelParsing.h"
 #include <iostream>
 #include <yarp/os/ResourceFinder.h>
-#include "iCub/iDynTree/iCubTree.h"
+#include "iCub/iDynTree/TorqueEstimationTree.h"
 
 namespace codyco {
 
@@ -28,8 +28,7 @@ namespace codyco {
         // First try to load urdf from local option
         if( rf.check("urdf") )
         {
-            std::string urdf_file = rf.find("urdf").asString().c_str();
-            std::string icub_urdf = rf.findFile(urdf_file.c_str());
+            std::string icub_urdf = rf.findFile("urdf");
             return true;
         }
 
@@ -43,13 +42,21 @@ namespace codyco {
         std::string wbiConfFile = rf.findFile("wbi_conf_file");
         yarpWbiOptions.fromConfigFile(wbiConfFile);
 
-        if( !yarpWbiOptions.check("urdf_file") )
+        if( !yarpWbiOptions.check("urdf") &&  !yarpWbiOptions.check("urdf_file") )
         {
             std::cerr << "[ERR] urdf_file not found in configuration files" << std::endl;
             return false;
         }
 
-        std::string urdf_file = yarpWbiOptions.find("urdf_file").asString().c_str();
+        std::string urdf_file;
+        if( yarpWbiOptions.check("urdf") )
+        {
+            urdf_file = yarpWbiOptions.find("urdf").asString().c_str();
+        }
+        else
+        {
+            urdf_file = yarpWbiOptions.find("urdf_file").asString().c_str();
+        }
         icub_urdf = rf.findFile(urdf_file.c_str());
 
         return true;
