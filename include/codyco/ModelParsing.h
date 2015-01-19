@@ -18,23 +18,19 @@
 #ifndef CODYCOLIB_MODELPARSING_H
 #define CODYCOLIB_MODELPARSING_H
 
+#include <string>
+
 namespace yarp {
     namespace os {
         class ResourceFinder;
     }
 }
 
-namespace iCub {
-    namespace iDynTree {
-        class iCubTree_version_tag;
-    }
-}
 
 namespace codyco
 {
-    bool iCubVersionFromRf(yarp::os::ResourceFinder & rf, iCub::iDynTree::iCubTree_version_tag & icub_version);
-
-    void iCubPartVersionOptionsPrint();
+    bool iCubURDFModelFromRf(yarp::os::ResourceFinder & rf,
+                             std::string & icub_urdf);
 }
 
 
