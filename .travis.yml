@@ -24,8 +24,8 @@ before_script:
   - make codycoCommons-dependees
   - export CMAKE_PREFIX_PATH=/home/travis/build/robotology-playground/codyco-superbuild/build/install
   - cd ../..
-  # go back to codyco-modules
-  - cd codyco-modules
+  # go back to codyco-commons
+  - cd codyco-commons
 
 script:
   - mkdir build
