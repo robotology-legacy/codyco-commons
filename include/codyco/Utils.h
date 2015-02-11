@@ -21,8 +21,6 @@
 #include <cstdio>
 
 //this is standard in C99 and C++11, but not on previous version of C++. GCC, Clang and MSVS should support it anyway
-#define DLOG(format, ...) \
-    printf(("[%s:%d] " format), __FILE__, __LINE__, ##__VA_ARGS__)
 
 #ifndef FUNCTION_NAME
 #if defined(_MSC_VER)
