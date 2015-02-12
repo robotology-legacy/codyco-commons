@@ -20,8 +20,6 @@
 
 #include <cstdio>
 
-//this is standard in C99 and C++11, but not on previous version of C++. GCC, Clang and MSVS should support it anyway
-
 #ifndef FUNCTION_NAME
 #if defined(_MSC_VER)
 #define FUNCTION_NAME __FUNCTION__
