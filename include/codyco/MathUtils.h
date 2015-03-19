@@ -94,8 +94,64 @@ namespace codyco {
                            Eigen::Ref<Eigen::MatrixXd> Apinv,
                            double tolerance,
                            unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
+
+        /** @brief Computes the truncated pseudo inverse of a matrix
+         *
+         * This function computes the truncated pseudo inverse of a matrix.
+         * Singular values less than the input tolerance will be set to sero.
+         * By default the pseudo inverse will be computed by using the thin U and V unitary matrices.
+         * @note: this does not allow the null space basis to be computed
+         * If you want to compute also the null space basis you have to:
+         * - specify Eigen::ComputeFullV as computationOptions
+         * - provide and already allocated buffer in nullSpaceBasisOfA
+         * @todo add default tolerance value.
+         *
+         * @param A the matrix to be pseudoinverted
+         * @param svdDecomposition the decomposition object (already allocated) to be used
+         * @param Apinv the matrix in which to save the pseudoinversion of A. The size must be correct (same as \f$A^\top\f$)
+         * @param tolerance tolerance to be used for the truncation
+         * @param nullSpaceBasisOfA null space basis of the input matrix A. Pass NULL to avoid computation
+         * @param[out] nullSpaceRows resulting rows for of the null space basis
+         * @param[out] nullSpaceCols resulting columns for of the null space basis
+         * @param computationOptions Eigen options for the computation. By default compute the thin U and V matrices.
+         */
+        void pseudoInverse(const Eigen::Ref<const Eigen::MatrixXd>& A,
+                           Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                           Eigen::Ref<Eigen::MatrixXd> Apinv,
+                           double tolerance,
+                           double * nullSpaceBasisOfA,
+                           int &nullSpaceRows, int &nullSpaceCols,
+                           unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
         
-        /** @brief Computes the skew-symmetric (3D) matrix form of 
+        /** @brief Compute the null space basis for the already computed SVD
+         *
+         * The nullSpaceBasisMatrix must be pre-allocated (for example to the size of the original matrix to be sure). You can then use the nullspace basis with the Eigen::Map object specifying as dimensions the output variables rows and cols
+         * \param[in] svdDecomposition the already computed SVD decomposition
+         * \param[in] tolerance the tolerance needed to compute the rank
+         * \param[in] an already allocated buffer for the null space basis
+         * \param[out] rows the rows of the nullspace basis
+         * \param[out] cols the columns of the nullspace basis
+         */
+        void nullSpaceBasisFromDecomposition(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                                                  double tolerance,
+                                                  double * nullSpaceBasisMatrix,
+                                                  int &rows, int &cols);
+        
+        /** @brief Compute the null space basis for the already computed SVD
+         *
+         * The nullSpaceBasisMatrix must be pre-allocated (for example to the size of the original matrix to be sure). You can then use the nullspace basis with the Eigen::Map object specifying as dimensions the output variables rows and cols
+         * \param[in] svdDecomposition the already computed SVD decomposition
+         * \param[in] rank rank of the original matrix
+         * \param[in] an already allocated buffer for the null space basis
+         * \param[out] rows the rows of the nullspace basis
+         * \param[out] cols the columns of the nullspace basis
+         */
+        void nullSpaceBasisFromDecomposition(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                                             int rank,
+                                             double * nullSpaceBasisMatrix,
+                                             int &rows, int &cols);
+        
+        /** @brief Computes the skew-symmetric (3D) matrix form of
          *  the input 3D vector for cross-product computation
          *
          * This function computes the skew symmetric matrix form of the input
