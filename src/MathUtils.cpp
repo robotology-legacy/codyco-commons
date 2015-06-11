@@ -80,9 +80,9 @@ namespace codyco {
                                  Eigen::Ref<Eigen::MatrixXd> Apinv,
                                  double tolerance,
                                  double dampingFactor,
+                                 unsigned int computationOptions,
                                  double * nullSpaceBasisOfA,
-                                 int &nullSpaceRows, int &nullSpaceCols,
-                                 unsigned int computationOptions)
+                                 int *nullSpaceRows, int *nullSpaceCols)
         {
             using namespace Eigen;
             
@@ -103,9 +103,10 @@ namespace codyco {
 
             Apinv = svdDecomposition.matrixV().leftCols(rank) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(rank).adjoint();
             
-            if (nullSpaceBasisOfA && (computationOptions & ComputeFullV)) {
+            if (nullSpaceBasisOfA && nullSpaceRows && nullSpaceCols
+                && (computationOptions & ComputeFullV)) {
                 //we can compute the null space basis for A
-                nullSpaceBasisFromDecomposition(svdDecomposition, rank, nullSpaceBasisOfA, nullSpaceRows, nullSpaceCols);
+                nullSpaceBasisFromDecomposition(svdDecomposition, rank, nullSpaceBasisOfA, *nullSpaceRows, *nullSpaceCols);
             }
         }
 

@@ -131,19 +131,19 @@ namespace codyco {
          * @param svdDecomposition the decomposition object (already allocated) to be used
          * @param Apinv the matrix in which to save the pseudoinversion of A. The size must be correct (same as \f$A^\top\f$)
          * @param tolerance tolerance to be used for the truncation
+         * @param computationOptions Eigen options for the computation. By default compute the thin U and V matrices.
          * @param nullSpaceBasisOfA null space basis of the input matrix A. Pass NULL to avoid computation
          * @param[out] nullSpaceRows resulting rows for of the null space basis
          * @param[out] nullSpaceCols resulting columns for of the null space basis
-         * @param computationOptions Eigen options for the computation. By default compute the thin U and V matrices.
          */
         void dampedPseudoInverse(const Eigen::Ref<const Eigen::MatrixXd>& A,
                                  Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
                                  Eigen::Ref<Eigen::MatrixXd> Apinv,
                                  double tolerance,
                                  double dampingFactor,
-                                 double * nullSpaceBasisOfA,
-                                 int &nullSpaceRows, int &nullSpaceCols,
-                                 unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
+                                unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV,
+                                 double * nullSpaceBasisOfA = NULL,
+                                 int *nullSpaceRows = NULL, int *nullSpaceCols = NULL);
         
         /** @brief Compute the null space basis for the already computed SVD
          *
