@@ -45,17 +45,6 @@ namespace codyco {
             return currentValue != currentValue;
         }
         
-        template <typename Derived1, typename Derived2>
-        void dampedPseudoInverse(const Eigen::MatrixBase<Derived1>& A,
-                                 double dampingFactor,
-                                 Eigen::MatrixBase<Derived2>& Apinv,
-                                 unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
-        
-//        template <typename Derived1, typename Derived2>
-//        void pseudoInverse(const Eigen::MatrixBase<Derived1>& A,
-//                           double tolerance,
-//                           Eigen::MatrixBase<Derived2>& Apinv);
-        
         /** @brief Computes the truncated pseudo inverse of a matrix
          *
          * This function computes the truncated pseudo inverse of a matrix.
@@ -122,6 +111,39 @@ namespace codyco {
                            double * nullSpaceBasisOfA,
                            int &nullSpaceRows, int &nullSpaceCols,
                            unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
+        
+        /** @brief Computes the damped pseudo inverse of a matrix
+         *
+         * This function computes the damped pseudo inverse of a matrix.
+         * Rank is computed with the specified tolerance.
+         * Singular values are regularized with the specified damping term, i.e.
+         * we solve the minimization problem ||Ax - b||^2 + \rho^2 ||x||^2
+         * with \rho the damping factor
+         * By default the pseudo inverse will be computed by using the thin U and V unitary matrices.
+         * @note: this does not allow the null space basis to be computed
+         * If you want to compute also the null space basis you have to:
+         * - specify Eigen::ComputeFullV as computationOptions
+         * - provide and already allocated buffer in nullSpaceBasisOfA
+         * @note the null space basis will be computed with the rank obtained by the tolerance factor, i.e. damping is not considered
+         * @todo add default tolerance value.
+         *
+         * @param A the matrix to be pseudoinverted
+         * @param svdDecomposition the decomposition object (already allocated) to be used
+         * @param Apinv the matrix in which to save the pseudoinversion of A. The size must be correct (same as \f$A^\top\f$)
+         * @param tolerance tolerance to be used for the truncation
+         * @param nullSpaceBasisOfA null space basis of the input matrix A. Pass NULL to avoid computation
+         * @param[out] nullSpaceRows resulting rows for of the null space basis
+         * @param[out] nullSpaceCols resulting columns for of the null space basis
+         * @param computationOptions Eigen options for the computation. By default compute the thin U and V matrices.
+         */
+        void dampedPseudoInverse(const Eigen::Ref<const Eigen::MatrixXd>& A,
+                                 Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                                 Eigen::Ref<Eigen::MatrixXd> Apinv,
+                                 double tolerance,
+                                 double dampingFactor,
+                                 double * nullSpaceBasisOfA,
+                                 int &nullSpaceRows, int &nullSpaceCols,
+                                 unsigned int computationOptions = Eigen::ComputeThinU|Eigen::ComputeThinV);
         
         /** @brief Compute the null space basis for the already computed SVD
          *

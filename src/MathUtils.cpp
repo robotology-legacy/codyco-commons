@@ -22,62 +22,6 @@ namespace codyco {
 
     namespace math {
         
-        template <typename Derived1, typename Derived2>
-        void dampedPseudoInverse(const Eigen::MatrixBase<Derived1>& A,
-                                 double dampingFactor,
-                                 Eigen::MatrixBase<Derived2>& Apinv,
-                                 unsigned int computationOptions)
-        {
-            using namespace Eigen;
-            
-            int m = A.rows(), n = A.cols(), k = m < n ? m : n;
-            JacobiSVD<typename MatrixBase<Derived1>::PlainObject> svd = A.jacobiSvd(computationOptions);
-            const typename JacobiSVD<typename Derived1::PlainObject>::SingularValuesType& singularValues = svd.singularValues();
-            MatrixXd sigmaDamped = MatrixXd::Zero(k, k);
-            
-            double damp = dampingFactor * dampingFactor;
-            for (int idx = 0; idx < k; idx++) {
-                sigmaDamped(idx, idx) = singularValues(idx) / (singularValues(idx) * singularValues(idx) + damp);
-            }
-            Apinv = svd.matrixV() * sigmaDamped * svd.matrixU().transpose();   // damped pseudoinverse
-        }
-        
-//        template <typename Derived1, typename Derived2>
-//        void pseudoInverse(const Eigen::MatrixBase<Derived1>& A,
-//                           double tolerance,
-//                           Eigen::MatrixBase<Derived2>& Apinv)
-//        {
-//            using namespace Eigen;
-//            JacobiSVD<typename MatrixBase<Derived1>::PlainObject> svd = A.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
-//            typename JacobiSVD<typename Derived1::PlainObject>::SingularValuesType singularValues = svd.singularValues();
-//            
-//            for (int idx = 0; idx < singularValues.size(); idx++) {
-//                singularValues(idx) = tolerance > 0 && singularValues(idx) > tolerance ? 1.0 / singularValues(idx) : 0.0;
-//            }
-//            
-//            Apinv = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().adJoint();   //pseudoinverse
-////            using namespace Eigen;
-////            JacobiSVD<typename MatrixBase<Derived1>::PlainObject> svd = A.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
-////            typename JacobiSVD<typename Derived1::PlainObject>::SingularValuesType singularValues = svd.singularValues();
-////            //I don't get why I cannot use the singular vector as in http://eigen.tuxfamily.org/bz/show_bug.cgi?id=257
-////            MatrixXd singularInverse = singularValues.asDiagonal();
-////            
-////            for (int idx = 0; idx < singularValues.size(); idx++) {
-////                singularInverse(idx, idx) = tolerance > 0 && singularValues(idx) > tolerance ? 1.0 / singularValues(idx) : 0.0;
-////            }
-////            
-////            //            for (int idx = 0; idx < singularValues.size(); idx++) {
-////            //                singularValues(idx) = tolerance > 0 && singularValues(idx) > tolerance ? 1.0 / singularValues(idx) : 0.0;
-////            //            }
-////            //            auto var = svd.matrixV() * sigmaDamped;
-////            //            auto var2 = sigmaDamped * svd.matrixU().transpose();
-////            //
-////            //            Apinv = var * svd.matrixU().transpose();
-////            
-////            Apinv = (svd.matrixV() * singularInverse * svd.matrixU().adjoint());   //pseudoinverse
-//        }
-        
-        
         void pseudoInverse(const Eigen::Ref<const Eigen::MatrixXd>& A,
                            Eigen::Ref<Eigen::MatrixXd> Apinv,
                            double tolerance,
@@ -109,9 +53,10 @@ namespace codyco {
                            unsigned int computationOptions)
         {
             using namespace Eigen;
-            svdDecomposition.compute(A, computationOptions);
+            
             if (computationOptions == 0) return; //if no computation options we cannot compute the pseudo inverse
-
+            svdDecomposition.compute(A, computationOptions);
+            
             JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
             int rank = 0;
             for (int idx = 0; idx < singularValues.size(); idx++) {
@@ -128,7 +73,40 @@ namespace codyco {
                 //we can compute the null space basis for A
                 nullSpaceBasisFromDecomposition(svdDecomposition, rank, nullSpaceBasisOfA, nullSpaceRows, nullSpaceCols);
             }
+        }
+        
+        void dampedPseudoInverse(const Eigen::Ref<const Eigen::MatrixXd>& A,
+                                 Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                                 Eigen::Ref<Eigen::MatrixXd> Apinv,
+                                 double tolerance,
+                                 double dampingFactor,
+                                 double * nullSpaceBasisOfA,
+                                 int &nullSpaceRows, int &nullSpaceCols,
+                                 unsigned int computationOptions)
+        {
+            using namespace Eigen;
             
+            if (computationOptions == 0) return; //if no computation options we cannot compute the pseudo inverse
+            svdDecomposition.compute(A, computationOptions);
+            
+            JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
+            
+            //rank will be used for the null space basis.
+            //not sure if this is correct
+            int rank = 0;
+            for (int idx = 0; idx < singularValues.size(); idx++) {
+                if (tolerance > 0 && singularValues(idx) > tolerance) {
+                    rank++;
+                }
+                singularValues(idx) = singularValues(idx) / ((singularValues(idx) * singularValues(idx)) + (dampingFactor * dampingFactor));
+            }
+
+            Apinv = svdDecomposition.matrixV().leftCols(rank) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(rank).adjoint();
+            
+            if (nullSpaceBasisOfA && (computationOptions & ComputeFullV)) {
+                //we can compute the null space basis for A
+                nullSpaceBasisFromDecomposition(svdDecomposition, rank, nullSpaceBasisOfA, nullSpaceRows, nullSpaceCols);
+            }
         }
 
         void nullSpaceBasisFromDecomposition(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
