@@ -58,8 +58,9 @@ namespace codyco {
             svdDecomposition.compute(A, computationOptions);
             
             JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
+            int singularValuesSize = singularValues.size();
             int rank = 0;
-            for (int idx = 0; idx < singularValues.size(); idx++) {
+            for (int idx = 0; idx < singularValuesSize; idx++) {
                 if (tolerance > 0 && singularValues(idx) > tolerance) {
                     singularValues(idx) = 1.0 / singularValues(idx);
                     rank++;
@@ -67,7 +68,9 @@ namespace codyco {
                     singularValues(idx) = 0.0;
                 }
             }
-            Apinv = svdDecomposition.matrixV().leftCols(rank) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(rank).adjoint();
+            
+            //equivalent to this U/V matrix in case they are computed full
+            Apinv = svdDecomposition.matrixV().leftCols(singularValuesSize) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(singularValuesSize).adjoint();
 
             if (nullSpaceBasisOfA && (computationOptions & ComputeFullV)) {
                 //we can compute the null space basis for A
@@ -93,15 +96,17 @@ namespace codyco {
             
             //rank will be used for the null space basis.
             //not sure if this is correct
+            int singularValuesSize = singularValues.size();
             int rank = 0;
-            for (int idx = 0; idx < singularValues.size(); idx++) {
+            for (int idx = 0; idx < singularValuesSize; idx++) {
                 if (tolerance > 0 && singularValues(idx) > tolerance) {
                     rank++;
                 }
                 singularValues(idx) = singularValues(idx) / ((singularValues(idx) * singularValues(idx)) + (dampingFactor * dampingFactor));
             }
 
-            Apinv = svdDecomposition.matrixV().leftCols(rank) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(rank).adjoint();
+            //equivalent to this U/V matrix in case they are computed full
+            Apinv = svdDecomposition.matrixV().leftCols(singularValuesSize) * singularValues.asDiagonal() * svdDecomposition.matrixU().leftCols(singularValuesSize).adjoint();
             
             if (nullSpaceBasisOfA && nullSpaceRows && nullSpaceCols
                 && (computationOptions & ComputeFullV)) {
