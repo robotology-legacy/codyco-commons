@@ -18,6 +18,8 @@
 #ifndef CODYCOLIB_LOCKGUARD_H
 #define CODYCOLIB_LOCKGUARD_H
 
+#include "Utils.h"
+
 namespace yarp {
     namespace os {
         class Mutex;
@@ -29,7 +31,7 @@ namespace codyco {
     /** @class provides a lock guard around a Yarp Mutex.
      * This class implements the same behaviour of std::unique_lock in C++11
      */
-    class LockGuard
+    class CODYCO_DEPRECATED("Use yarp::os::LockGuard instead") LockGuard
     {
     public:
         /**
