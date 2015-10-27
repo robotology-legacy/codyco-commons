@@ -20,7 +20,6 @@
 
 #include "MathUtils.h"
 #include "Utils.h"
-#include "LockGuard.h"
 #include "ModelParsing.h"
 
 #endif

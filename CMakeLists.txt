@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(${VARS_PREFIX}_MAJOR_VERSION 0)
 set(${VARS_PREFIX}_MINOR_VERSION 0)
-set(${VARS_PREFIX}_PATCH_VERSION 1)
+set(${VARS_PREFIX}_PATCH_VERSION 2)
 set(${VARS_PREFIX}_VERSION ${${VARS_PREFIX}_MAJOR_VERSION}.${${VARS_PREFIX}_MINOR_VERSION}.${${VARS_PREFIX}_PATCH_VERSION})
 
 option(COMPILE_AS_SHARED_LIBRARY "Compile ${PROJECT_NAME} as a shared library" TRUE)
@@ -32,13 +32,13 @@ find_package(Eigen3 REQUIRED)
 find_package(iDynTree REQUIRED)
 
 set(folder_source src/MathUtils.cpp
-                     src/LockGuard.cpp
+                     # src/LockGuard.cpp
                      src/ControllerThread.cpp
                      src/ModelParsing.cpp)
 
 set(folder_header include/codyco/Commons.h
                   include/codyco/Utils.h
-                  include/codyco/LockGuard.h
+                  # include/codyco/LockGuard.h
                   include/codyco/MathUtils.h
                   include/codyco/ControllerThread.h
                   include/codyco/ModelParsing.h)
