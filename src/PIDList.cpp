@@ -1,19 +1,30 @@
 #include "PIDList.h"
 
 #include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/ITorqueControl.h>
 #include <sstream>
 
 namespace codyco {
 
-    PIDList::PIDList(size_t _size): m_size(_size), m_pidList(0)
+    PIDList::PIDList(size_t _size)
+    : m_size(_size)
+    , m_pidList(0)
+    , m_torqueParameters(0)
     {
         m_pidList = new yarp::dev::Pid[m_size];
+        m_torqueParameters = new yarp::dev::MotorTorqueParameters[m_size];
     }
 
-    PIDList::PIDList(const PIDList& list): m_size(list.m_size), m_pidList(0) {
+    PIDList::PIDList(const PIDList& list)
+    : m_size(list.m_size)
+    , m_pidList(0)
+    , m_torqueParameters(0)
+    {
         m_pidList = new yarp::dev::Pid[m_size];
+        m_torqueParameters = new yarp::dev::MotorTorqueParameters[m_size];
         for (int i = 0; i < m_size; ++i) {
             m_pidList[i] = list.m_pidList[i];
+            m_torqueParameters[i] = list.m_torqueParameters[i];
         }
     }
 
@@ -21,6 +32,10 @@ namespace codyco {
         if (m_pidList) {
             delete [] m_pidList;
             m_pidList = 0;
+        }
+        if (m_torqueParameters) {
+            delete [] m_torqueParameters;
+            m_torqueParameters = 0;
         }
         m_size = 0;
     }
@@ -31,10 +46,17 @@ namespace codyco {
         if (this->m_pidList) {
             delete [] m_pidList;
         }
+        if (this->m_torqueParameters) {
+            delete [] m_torqueParameters;
+        }
+
         this->m_size = list.m_size;
         m_pidList = new yarp::dev::Pid[m_size];
+        m_torqueParameters = new yarp::dev::MotorTorqueParameters[m_size];
+
         for (int i = 0; i < m_size; ++i) {
             m_pidList[i] = list.m_pidList[i];
+            m_torqueParameters[i] = list.m_torqueParameters[i];
         }
         return *this;
     }
@@ -55,6 +77,11 @@ namespace codyco {
     yarp::dev::Pid * const PIDList::pidList() const
     {
         return m_pidList;
+    }
+    
+    yarp::dev::MotorTorqueParameters * const PIDList::motorParametersList() const
+    {
+        return m_torqueParameters;
     }
 
     std::ostream& operator<<(std::ostream& stream, const PIDList& list)

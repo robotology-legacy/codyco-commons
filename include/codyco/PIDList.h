@@ -7,6 +7,7 @@
 namespace yarp {
     namespace dev {
         class Pid;
+        class MotorTorqueParameters;
     }
 }
 
@@ -18,6 +19,7 @@ class codyco::PIDList {
 private:
     size_t m_size;
     yarp::dev::Pid *m_pidList;
+    yarp::dev::MotorTorqueParameters *m_torqueParameters;
 public:
 
     explicit PIDList(size_t _size);
@@ -30,6 +32,7 @@ public:
 
     size_t size() const;
     yarp::dev::Pid * const pidList() const;
+    yarp::dev::MotorTorqueParameters * const motorParametersList() const;
 
     std::string description() const;
 
