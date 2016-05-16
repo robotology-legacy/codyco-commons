@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstdlib>
+#include "Utils.h"
 
 namespace yarp {
     namespace dev {
@@ -15,7 +16,9 @@ namespace codyco {
     class PIDList;
 }
 
-class codyco::PIDList {
+
+class CODYCO_DEPRECATED("use yarpWBI::PIDList (in yarpWholebodyInterface) instead.")
+codyco::PIDList {
 private:
     size_t m_size;
     yarp::dev::Pid *m_pidList;
