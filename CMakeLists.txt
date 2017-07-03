@@ -76,7 +76,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOU
                                            ${iDynTree_INCLUDE_DIRS}
                                            ${skinDynLib_INCLUDE_DIRS}
                                            ${ctrlLib_INCLUDE_DIRS}
-                                           ${EIGEN3_INCLUDE_DIRS})
+                                           ${EIGEN3_INCLUDE_DIR})
 
 target_link_libraries(${LIBRARY_NAME} ${YARP_LIBRARIES}
                                       ${iDynTree_LIBRARIES}
